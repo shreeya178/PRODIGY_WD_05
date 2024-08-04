@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather Forecast</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: Arial, sans-serif;
+        }
+        .video-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -1;
+        }
+        .container {
+            position: relative;
+            z-index: 1;
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+        .weather {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 20px;
+            border-radius: 10px;
+            display: inline-block;
+        }
+        input {
+            padding: 10px;
+            border-radius: 5px;
+            border: none;
+            margin-bottom: 10px;
+        }
+        button {
+            padding: 10px 20px;
+            border-radius: 5px;
+            border: none;
+            background-color: #800080; /* Changed to purple */
+            color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #6a006a; /* Darker shade of purple for hover effect */
+        }
+        .weather-info {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <video autoplay muted loop class="video-background">
+        <source src="https://videos.pond5.com/news-breaking-background-loop-4k-footage-140753045_main_xxl.mp4">
+    </video>
+    <div class="container">
+        <div class="weather">
+            <h1>Weather Forecast</h1>
+            <input type="text" id="city" placeholder="Enter city name" value="Mumbai">
+            <button onclick="getWeather()">Get Weather</button>
+            <div class="weather-info" id="weather-info"></div>
+        </div>
+    </div>
+    <script>
+        async function getWeather() {
+            const city = document.getElementById('city').value;
+            const apiKey = '4d0a3d08aa4dda42f79b9ea45ab132ec';  // Replace with your OpenWeatherMap API key
+            const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
+            
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+                
+                if (response.ok) {
+                    const weatherInfo = `
+                        <h2>${data.name}, ${data.sys.country}</h2>
+                        <p>Temperature: ${data.main.temp}°C</p>
+                        <p>Weather: ${data.weather[0].description}</p>
+                        <p>Humidity: ${data.main.humidity}%</p>
+                        <p>Wind Speed: ${data.wind.speed} m/s</p>
+                    `;
+                    document.getElementById('weather-info').innerHTML = weatherInfo;
+                } else {
+                    document.getElementById('weather-info').innerHTML = `Error: ${data.message}`;
+                }
+            } catch (error) {
+                document.getElementById('weather-info').innerHTML = 'Unable to fetch weather data. Please try again later.';
+            }
+        }
+    </script>
+</body>
+</html>
